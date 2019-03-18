@@ -1,0 +1,22 @@
+{
+  "name": "palette-picker-be",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.4",
+    "knex": "^0.16.3",
+    "pg": "^7.9.0"
+  },
+  "devDependencies": {
+    "@babel/polyfill": "^7.2.5",
+    "babel-jest": "^24.5.0",
+    "supertest": "^4.0.2"
+  }
+}

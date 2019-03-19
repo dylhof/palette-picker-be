@@ -36,15 +36,41 @@ describe('server', () => {
 
     it('should return a status of 404 and error msg if pallet is not in db', async () => {
       //setup
-      const id = 0
-      const expectedErrorMsg = `Sorry! A palette with id ${id} was not found.`
+      const id = 0;
+      const expectedErrorMsg = `Sorry! A palette with id ${id} was not found.`;
       //execution
-      const response = await request(app).get(`/api/v1/palettes/${id}`)
-      const errorMsg = response.body
-      const status = response.status
+      const response = await request(app).get(`/api/v1/palettes/${id}`);
+      const errorMsg = response.body;
+      const status = response.status;
       //expectation
       expect(errorMsg).toEqual(expectedErrorMsg);
       expect(status).toBe(404);
-    })
+    });
   });
+
+  describe('GET /projects/:id', () => {
+    it('should return a specific project from the db', async () => {
+      //setup
+      const expectedProject = await database('projects').first();
+      const id = expectedProject.id;
+      //execution
+      const response = await request(app).get(`/api/v1/projects/${id}`);
+      const project = response.body;
+      //expectation
+      expect(project.name).toEqual(expectedProject.name);
+    });
+
+    it('should return a status of 404 and error msg if project is not in db', async () => {
+      //setup
+      const id = 0;
+      const expectedErrorMsg = `Sorry! A project with id ${id} was not found.`;
+      //execution
+      const response = await request(app).get(`/api/v1/projects/${id}`);
+      const errorMsg = response.body;
+      const status = response.status;
+      //expectation
+      expect(errorMsg).toEqual(expectedErrorMsg);
+      expect(status).toBe(404);
+    });
+  })
 })

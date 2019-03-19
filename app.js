@@ -29,4 +29,18 @@ app.get('/api/v1/palettes/:id', (request, response) => {
     })
     .catch(error => response.status(500).json({ error }));
 })
+
+app.get('/api/v1/projects/:id', (request, response) => {
+  const id = parseInt(request.params.id)
+  database('projects').where('id', id)
+    .then(projects => {
+      if(projects.length) {
+        return response.status(200).json(projects[0])
+      } else {
+        return response.status(404).json(`Sorry! A project with id ${id} was not found.`)
+      }
+    })
+    .catch(error => response.status(500).json({ error }));
+});
+
 module.exports = app;

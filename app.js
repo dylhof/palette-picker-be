@@ -20,7 +20,13 @@ app.get('/api/v1/projects', (request, response) => {
 app.get('/api/v1/palettes/:id', (request, response) => {
   const id = parseInt(request.params.id);
   database('palettes').where('id', id)
-    .then(palettes => response.status(200).json(palettes[0]))
+    .then(palettes => {
+      if(palettes.length) {
+        return response.status(200).json(palettes[0])
+      } else {
+        return response.status(404).json(`Sorry! A palette with id ${id} was not found.`)
+      }
+    })
     .catch(error => response.status(500).json({ error }));
 })
 module.exports = app;

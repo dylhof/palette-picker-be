@@ -72,5 +72,23 @@ describe('server', () => {
       expect(errorMsg).toEqual(expectedErrorMsg);
       expect(status).toBe(404);
     });
-  })
-})
+  });
+
+  describe('GET /projects/:id/palettes', () => {
+    it('should return all palettes for a project that is in db', async () => {
+      //setup
+      const expectedProject = await database('projects').first();
+      const projectId = expectedProject.id; 
+      const numPalettesExpected = projects.find(project => { 
+        return project.name === expectedProject.name 
+      }).palettes.length;
+      
+      //execution
+      const response = await request(app).get(`/api/v1/projects/${projectId}/palettes`);
+      const palettes = response.body;
+
+      //expectation
+      expect(palettes.length).toEqual(numPalettesExpected);
+    });
+  });
+});

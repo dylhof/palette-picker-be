@@ -21,4 +21,17 @@ describe('server', () => {
       expect(result.length).toEqual(numExpectedProjects);
     });
   });
+
+  describe('GET /palette/:id', () => {
+    it('should return a specific palette from the db', async () => {
+      //setup
+      let expectedPalette = await database('palettes').first();
+      const id = expectedPalette.id;
+      //execution
+      const response = await request(app).get(`/api/v1/palettes/${id}`);
+      const palette = response.body;
+      //expectation
+      expect(palette.name).toEqual(expectedPalette.name);
+    });
+  });
 })

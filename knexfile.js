@@ -18,7 +18,7 @@ module.exports = {
     connection: 'postgress://localhost/palettepicker_test',
     useNullAsDefault: true,
     migrations: {
-      directory: '/db/migrations'
+      directory: './db/migrations'
     },
     seeds: {
       directory: './db/seeds/test'

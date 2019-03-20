@@ -174,5 +174,56 @@ describe('server', () => {
       expect(response.status).toBe(201);
       expect(palette.name).toEqual(newPalette.name);
     });
+
+    it('should return status 422 and a message if missing params', async () => {
+      //setup
+      const project = await database('projects').first();
+      const projectId = project.id;
+      const newPalette = {
+        color1: '#3hd95j',
+        color2: '#39dhu7',
+        color3: '#102e9c',
+        color4: '#936kd4',
+        color5: '#9shj27',
+        project_id: projectId
+      };
+      const expectedMessage = `Expected format: { 
+          name: <String>, 
+          color1: <String>, 
+          color2: <String>, 
+          color3: <String>, 
+          color4: <String>, 
+          color5: <String>,
+          project_id: <Integer>
+        }. You're missing a name property`;
+
+      //execution
+      const response = await request(app).post('/api/v1/palettes').send(newPalette);
+
+      //expectation
+      expect(response.status).toBe(422);
+      expect(response.body).toEqual(expectedMessage);
+    });
+
+    it('should return a status of 412 and a message if no matching project id', async () => {
+      //setup
+      const newPalette = {
+        name: 'Pretty Colors',
+        color1: '#3hd95j',
+        color2: '#39dhu7',
+        color3: '#102e9c',
+        color4: '#936kd4',
+        color5: '#9shj27',
+        project_id: "0"
+      };
+      const expectedMessage = 'Cannot add a palette without a project. No project exists with id: 0';
+
+      //execution
+      const response = await request(app).post('/api/v1/palettes').send(newPalette);
+
+      //expectation
+      expect(response.status).toBe(412);
+      expect(response.body).toEqual(expectedMessage);
+    });
   });
 });

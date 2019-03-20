@@ -73,8 +73,42 @@ app.post('/api/v1/projects', (request, response) => {
         .then(projectIds => response.status(201).json({ id: projectIds[0] }))
         .catch(error => response.status(500).json({ error }))
     })
-  .catch(error => {return response.status(500).json({ error })})
-    
-})
+  .catch(error => {return response.status(500).json({ error })});   
+});
+
+app.post('/api/v1/palettes', (request, response) => {
+  const palette = request.body;
+  const { project_id } = palette;
+
+  for(let requiredParameter of ['name', 'color1', 'color2', 'color3', 'color4', 'color5', 'project_id']) {
+    if(!palette[requiredParameter]) {
+      return response.status(422)
+        .json(`Expected format: { 
+          name: <String>, 
+          color1: <String>, 
+          color2: <String>, 
+          color3: <String>, 
+          color4: <String>, 
+          color5: <String>,
+          project_id: <Integer>
+        }. You're missing a ${requiredParameter} property`);
+    }
+  }
+
+  database('projects').where('id', project_id)
+    .then(projects => {
+      if(!projects.length) {
+        return response.status(412)
+          .json(`Cannot add a palette without a project. No project exists with id: ${project_id}`);
+      }
+      database('palettes').insert(palette, 'id')
+        .then(paletteIds => {
+          return response.status(201).json({ id: paletteIds[0] });
+        })
+        .catch(error => { return response.status(500).json({ error })});
+    })
+    .catch(error => { return response.status(500).json({ error }) });
+
+});
 
 module.exports = app;

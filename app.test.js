@@ -148,6 +148,31 @@ describe('server', () => {
       //expectation
       expect(response.status).toBe(409);
       expect(response.body).toEqual(expectedMessage);
-    })
+    });
+  });
+
+  describe('POST /palettes', () => {
+    it('should add a palette to the db and return an id', async () => {
+      //setup
+      const project = await database('projects').first();
+      const projectId = project.id;
+      const newPalette = {
+        name: 'Pretty Colors',
+        color1: '#3hd95j',
+        color2: '#39dhu7',
+        color3: '#102e9c',
+        color4: '#936kd4',
+        color5: '#9shj27',
+        project_id: projectId
+      };
+
+      //execution
+      const response = await request(app).post('/api/v1/palettes').send(newPalette);
+      const palettes = await database('palettes').where('id', response.body.id);
+      const palette = palettes[0];
+      //expectation
+      expect(response.status).toBe(201);
+      expect(palette.name).toEqual(newPalette.name);
+    });
   });
 });

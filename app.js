@@ -95,7 +95,7 @@ app.post('/api/v1/palettes', (request, response) => {
     }
   }
 
-  database('projects').where('id', project_id)
+  database('projects').where('id', parseInt(project_id))
     .then(projects => {
       if(!projects.length) {
         return response.status(412)

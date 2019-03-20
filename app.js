@@ -108,7 +108,30 @@ app.post('/api/v1/palettes', (request, response) => {
         .catch(error => { return response.status(500).json({ error })});
     })
     .catch(error => { return response.status(500).json({ error }) });
-
 });
 
+app.put('/api/v1/projects/:id', (request, response) => {
+  const projectUpdates = {...request.body, updated_at: new Date()};
+  const id = parseInt(request.params.id);
+
+  database('projects').where('id', id)
+    .then(projects => {
+      if(!projects.length) {
+        return response.status(404).json(`No project exists with the id ${id}`)
+      }
+      database('projects').where('name', projectUpdates.name)
+        .then(projects => {
+          if(projects.length){
+            return response.status(409).json('Project name already exists. Either select a new name or click CANCEL.')
+          } 
+          database('projects').where('id', id).update(projectUpdates)
+            .then(() => {return response.sendStatus(204)})
+            .catch(error => {return response.status(500).json({ error })})
+        })
+        .catch(error => {return response.status(500).json({ error })})
+    })
+    .catch(error => response.status(500).json({ error }))
+
+  
+})
 module.exports = app;

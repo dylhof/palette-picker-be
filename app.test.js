@@ -226,4 +226,50 @@ describe('server', () => {
       expect(response.body).toEqual(expectedMessage);
     });
   });
+
+  describe('PUT /projects/:id', () => {
+    it('should update a specific project in the db', async () => {
+      //setup
+      const projectToUpdate = await database('projects').first();
+      const id = projectToUpdate.id;
+      const updatedProject = { name: 'Fancy project name'};
+
+      //execution
+      const response = await request(app).put(`/api/v1/projects/${id}`).send(updatedProject);
+      const results = await database('projects').where('id', id);
+      const project = results[0];
+
+      //expectation
+      expect(response.status).toBe(204);
+      expect(project.name).toEqual(updatedProject.name);
+    })
+
+    it('should return a status 404 and a message if no project with id exists in db', async () => {
+      //setup
+      const updatedProject = { name: 'Fancy project name'};
+      const expectedMessage = 'No project exists with the id 0';
+
+      //execution
+      const response = await request(app).put(`/api/v1/projects/0`).send(updatedProject);
+
+      //expectation
+      expect(response.status).toBe(404);
+      expect(response.body).toEqual(expectedMessage);
+    })
+
+    it('should return a status of 409 and a message if project name already exists', async () => {
+      //setup
+      const existingProject = await database('projects').first();
+      const updatedProject = { name: existingProject.name };
+      const id = existingProject.id++;
+      const expectedMessage = 'Project name already exists. Either select a new name or click CANCEL.';
+
+      //execution
+      const response = await request(app).put(`/api/v1/projects/${id}`).send(updatedProject);
+
+      //expectation
+      expect(response.status).toBe(409);
+      expect(response.body).toEqual(expectedMessage);
+    })
+  })
 });

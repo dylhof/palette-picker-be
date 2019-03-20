@@ -53,10 +53,28 @@ app.get('/api/v1/projects/:id/palettes', (request, response) => {
     })
     .then(() => {
       database('palettes').where('project_id', id)
-        .then(palettes => response.status(200).json(palettes))
-        .catch(error => response.status(500).json({ error }));
+        .then(palettes => {return response.status(200).json(palettes)})
+        .catch(error => { return response.status(500).json({ error })});
     })
-    .catch(error => response.status(500).json({ error }));
+    .catch(error => {return response.status(500).json({ error })});
 });
+
+app.post('/api/v1/projects', (request, response) => {
+  const project = request.body;
+  if(!project.name) {
+    return response.status(422).json('Every project needs a name!')
+  }
+  database('projects').where('name', project.name)
+    .then(projects => {
+      if(projects.length){
+        return response.status(409).json('Project name already exists.')
+      } 
+      database('projects').insert(project, 'id')
+        .then(projectIds => response.status(201).json({ id: projectIds[0] }))
+        .catch(error => response.status(500).json({ error }))
+    })
+  .catch(error => {return response.status(500).json({ error })})
+    
+})
 
 module.exports = app;

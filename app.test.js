@@ -106,4 +106,48 @@ describe('server', () => {
       expect(status).toBe(404);
     });
   });
+
+  describe('POST /projects', () => {
+    it('should add a project to the db and return status 201 and an id', async () => {
+      //setup
+      const newProject = { name: 'Awesome Project' };
+
+      //execution
+      const response = await request(app).post(`/api/v1/projects`).send(newProject);
+      const projects = await database('projects').where('id', response.body.id);
+      const project = projects[0];
+
+      //expectation
+      expect(response.status).toBe(201);
+      expect(project.name).toEqual(newProject.name);
+    });
+
+    it('should return a status of 422 and a message if the project does not have a name', async () => {
+      //setup
+      const newProject = {name: ''};
+      const expectedMessage = 'Every project needs a name!';
+
+      //execution
+      const response = await request(app).post('/api/v1/projects').send(newProject);
+      
+      //expectation
+      expect(response.status).toBe(422);
+      expect(response.body).toEqual(expectedMessage);
+    });
+
+    it('should return a status of 409 and a message if the name is a duplicate', async () => {
+      //setup
+      const existingProject = projects[0];
+      const nameToTry = existingProject.name;
+      const newProject = { name: nameToTry };
+      const expectedMessage = 'Project name already exists.';
+
+      //execution
+      const response = await request(app).post('/api/v1/projects').send(newProject);
+
+      //expectation
+      expect(response.status).toBe(409);
+      expect(response.body).toEqual(expectedMessage);
+    })
+  });
 });

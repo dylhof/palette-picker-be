@@ -177,4 +177,24 @@ app.delete('/api/v1/projects/:id', (request, response) => {
     })
     .catch(error => response.status(500).json({ error }));
 });
+
+app.delete('/api/v1/palettes/:id', (request, response) => {
+  const id = parseInt(request.params.id);
+
+  database('palettes').where('id', id)
+    .then(palettes => {
+      if(!palettes.length) {
+        return response.status(404).json(`No palette exists with id: ${id}`);
+      }
+      database('palettes').where('id', id).del()
+        .then(() => {
+          return response.sendStatus(204);
+        })
+        .catch(error => {
+          return response.status(500).json({ error })
+        });
+    })
+    .catch(error => response.status(500).json({ error }));
+});
+
 module.exports = app;

@@ -262,7 +262,7 @@ describe('server', () => {
       const existingProject = await database('projects').first();
       const updatedProject = { name: existingProject.name };
       const id = existingProject.id++;
-      const expectedMessage = 'Project name already exists. Either select a new name or click CANCEL.';
+      const expectedMessage = 'Project name already exists.';
 
       //execution
       const response = await request(app).put(`/api/v1/projects/${id}`).send(updatedProject);
@@ -316,6 +316,37 @@ describe('server', () => {
       //expectation
       expect(response.status).toBe(404);
 
+      expect(response.body).toEqual(expectedMessage);
+    });
+  });
+
+  describe('DELETE /projects/:id', () => {
+    it('should delete a specific project and associated palettes from the db', async () => {
+      //setup
+      const projectToDelete = await database('projects').first();
+      const id = projectToDelete.id;
+      
+      //execution
+      const response = await request(app).delete(`/api/v1/projects/${id}`);
+      const results = await database('projects').where('id', id);
+      const assocPalettes = await database('palettes').where('project_id', id);
+      
+      //expectation
+      expect(response.status).toBe(204);
+      expect(results.length).toBe(0);
+      expect(assocPalettes.length).toBe(0);
+    });
+
+    it('should return a 404 and a message if there is no project with id in db', async () => {
+      //setup
+      const id = 0;
+      const expectedMessage = `No project exists with id: ${id}.`;
+
+      //execution
+      const response = await request(app).delete(`/api/v1/projects/${id}`);
+    
+      //expectation
+      expect(response.status).toBe(404);
       expect(response.body).toEqual(expectedMessage);
     });
   });

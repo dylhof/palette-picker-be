@@ -242,7 +242,7 @@ describe('server', () => {
       //expectation
       expect(response.status).toBe(204);
       expect(project.name).toEqual(updatedProject.name);
-    })
+    });
 
     it('should return a status 404 and a message if no project with id exists in db', async () => {
       //setup
@@ -255,7 +255,7 @@ describe('server', () => {
       //expectation
       expect(response.status).toBe(404);
       expect(response.body).toEqual(expectedMessage);
-    })
+    });
 
     it('should return a status of 409 and a message if project name already exists', async () => {
       //setup
@@ -270,6 +270,53 @@ describe('server', () => {
       //expectation
       expect(response.status).toBe(409);
       expect(response.body).toEqual(expectedMessage);
-    })
-  })
+    });
+  });
+
+  describe('PUT /palettes/:id', () => {
+    it('should update a specific palette it the db', async () => {
+      //setup
+      const paletteToUpdate = await database('palettes').first();
+      const id = paletteToUpdate.id;
+      const updatedPalette = {
+        name: 'Pretty Colors',
+        color1: '#3hd95j',
+        color2: '#39dhu7',
+        color3: '#102e9c',
+        color4: '#936kd4',
+        color5: '#9shj27',
+        project_id: paletteToUpdate.project_id
+      };
+      //execution
+      const response = await request(app).put(`/api/v1/palettes/${id}`).send(updatedPalette);
+      const results = await database('palettes').where('id', id);
+      const palette = results[0];
+
+      //expectation
+      expect(response.status).toBe(204);
+      expect(palette.name).toEqual(updatedPalette.name);
+      expect(palette.color4).toEqual(updatedPalette.color4);
+    });
+
+    it('should return a status of 404 and a message if no palette with id exisits in db', async() => {
+      //setup
+      const expectedMessage = 'No palette exists with the id: 0';
+      const updatedPalette = {
+        name: 'Pretty Colors',
+        color1: '#3hd95j',
+        color2: '#39dhu7',
+        color3: '#102e9c',
+        color4: '#936kd4',
+        color5: '#9shj27',
+        project_id: 0
+      };
+      //execution
+      const response = await request(app).put('/api/v1/palettes/0').send(updatedPalette);
+    
+      //expectation
+      expect(response.status).toBe(404);
+
+      expect(response.body).toEqual(expectedMessage);
+    });
+  });
 });

@@ -152,4 +152,29 @@ app.put('/api/v1/palettes/:id', (request, response) => {
     })
     .catch(error => response.status(500).json({ error }));
 });
+
+app.delete('/api/v1/projects/:id', (request, response) => {
+  const id = parseInt(request.params.id);
+
+  database('projects').where('id', id)
+    .then(projects => {
+      if(!projects.length) {
+        return response.status(404).json(`No project exists with id: ${id}.`);
+      }
+      database('palettes').where('project_id', id).del()
+        .then(() => {
+          database('projects').where('id', id).del()
+            .then(() => {
+              return response.sendStatus(204);
+            })
+            .catch(error => {
+              return response.status(500).json({ error });
+            });
+        })
+        .catch(error => {
+          return response.status(500).json({ error });
+        })
+    })
+    .catch(error => response.status(500).json({ error }));
+});
 module.exports = app;

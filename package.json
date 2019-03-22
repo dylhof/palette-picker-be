@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "test:watch": "jest --watchAll",
-    "test": "jest",
+    "test": "jest --forceExit",
     "migrate:test": "knex migrate:latest --env=test",
     "seed:test": "knex seed:run --env=test"
   },

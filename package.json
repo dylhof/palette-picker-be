@@ -5,9 +5,10 @@
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
-    "test": "jest --watchAll",
-    "migrate:test": "knex migrate:latest",
-    "seed:test": "knex seed:run"
+    "test:watch": "jest --watchAll",
+    "test": "jest",
+    "migrate:test": "knex migrate:latest --env=test",
+    "seed:test": "knex seed:run --env=test"
   },
   "keywords": [],
   "author": "",

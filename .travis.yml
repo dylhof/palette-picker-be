@@ -4,6 +4,6 @@ node_js:
 services:
   - postgresql
 before_script:
-  - psql -c 'create database palettepicker_test;' -U postgres
-  - npm run migrate:test --env=test
-  - npm run seed:test  --env=test
+  - psql -c 'CREATE DATABASE palettepicker_test;' -U postgres
+  - npm run migrate:test
+  - npm run seed:test

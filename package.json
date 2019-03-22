@@ -6,8 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "test": "jest --watchAll",
-    "migrate": "knex migrate:latest",
-    "seed": "knex seed:run"
+    "migrate:test": "knex migrate:latest",
+    "seed:test": "knex seed:run"
   },
   "keywords": [],
   "author": "",

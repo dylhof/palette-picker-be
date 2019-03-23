@@ -9,9 +9,6 @@ before_script:
 - npm run seed:test
 notifications:
   email: false
-before_deploy:
-  - heroku run 'knex migrate:latest'
-  - heroku run 'knex seed:run'
 deploy:
   provider: heroku
   api_key:

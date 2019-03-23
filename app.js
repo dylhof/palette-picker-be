@@ -9,6 +9,10 @@ const cors = require('cors');
 app.use(express.json());
 app.use(cors());
 
+app.get('/', (request, response) => {
+  response.send('API for the wonderful app Palette-Picker by Tiffany Bachmann and Dylan Hofmann! woo!')
+});
+
 app.get('/api/v1/projects', (request, response) => {
   database('projects').select()
     .then(projects => {

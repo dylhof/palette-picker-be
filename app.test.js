@@ -35,9 +35,10 @@ describe('server', () => {
       //setup
       const project = await database('projects').first();
       const nameParam = project.name;
+      const letters = `${project.name[0]}${project.name[1]}`;
 
       //exectution
-      const response = await request(app).get(`/api/v1/projects?name=${nameParam}`);
+      const response = await request(app).get(`/api/v1/projects?name=${letters}`);
       const nameResult = response.body[0].name;
 
       //expectation

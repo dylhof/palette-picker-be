@@ -20,6 +20,19 @@ describe('server', () => {
       //expectation
       expect(result.length).toEqual(numExpectedProjects);
     });
+
+    it('should return any project in db matching query param if provided', async () => {
+      //setup
+      const project = await database('projects').first();
+      const nameParam = project.name;
+
+      //exectution
+      const response = await request(app).get(`/api/v1/projects?name=${nameParam}`);
+      const nameResult = response.body[0].name;
+
+      //expectation
+      expect(nameResult).toEqual(nameParam);
+    });
   });
 
   describe('GET /palette/:id', () => {

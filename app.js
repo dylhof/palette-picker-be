@@ -23,14 +23,15 @@ app.get('/api/v1/projects', (request, response) => {
       .catch(error => {
         return response.status(500).json({ error });
       });
+  } else {
+    database('projects').select()
+      .then(projects => {
+        return response.status(200).json(projects);
+      })
+      .catch(error => {
+        return response.status(500).json({ error });
+      });
   }
-  database('projects').select()
-    .then(projects => {
-      return response.status(200).json(projects);
-    })
-    .catch(error => {
-      return response.status(500).json({ error });
-    });
 });
 
 app.get('/api/v1/palettes/:id', (request, response) => {

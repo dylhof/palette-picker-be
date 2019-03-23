@@ -6,6 +6,14 @@ const database = require('knex')(configuration);
 const projects = require('./paletteData');
 
 describe('server', () => {
+  let mockPalette = {
+    color1: '#3hd95j',
+    color2: '#39dhu7',
+    color3: '#102e9c',
+    color4: '#936kd4',
+    color5: '#9shj27',
+  };
+
   beforeEach(async () => {
     await database.seed.run();
   });
@@ -14,9 +22,11 @@ describe('server', () => {
     it('should return all projects in the db', async () => {
       //setup
       const numExpectedProjects = projects.length;
+
       //execution
       const response = await request(app).get('/api/v1/projects');
       const result = response.body;
+
       //expectation
       expect(result.length).toEqual(numExpectedProjects);
     });
@@ -40,9 +50,11 @@ describe('server', () => {
       //setup
       const expectedPalette = await database('palettes').first();
       const id = expectedPalette.id;
+
       //execution
       const response = await request(app).get(`/api/v1/palettes/${id}`);
       const palette = response.body;
+
       //expectation
       expect(palette.name).toEqual(expectedPalette.name);
     });
@@ -51,10 +63,12 @@ describe('server', () => {
       //setup
       const id = 0;
       const expectedErrorMsg = `Sorry! A palette with id ${id} was not found.`;
+
       //execution
       const response = await request(app).get(`/api/v1/palettes/${id}`);
       const errorMsg = response.body;
       const status = response.status;
+
       //expectation
       expect(errorMsg).toEqual(expectedErrorMsg);
       expect(status).toBe(404);
@@ -66,9 +80,11 @@ describe('server', () => {
       //setup
       const expectedProject = await database('projects').first();
       const id = expectedProject.id;
+
       //execution
       const response = await request(app).get(`/api/v1/projects/${id}`);
       const project = response.body;
+
       //expectation
       expect(project.name).toEqual(expectedProject.name);
     });
@@ -77,10 +93,12 @@ describe('server', () => {
       //setup
       const id = 0;
       const expectedErrorMsg = `Sorry! A project with id ${id} was not found.`;
+
       //execution
       const response = await request(app).get(`/api/v1/projects/${id}`);
       const errorMsg = response.body;
       const status = response.status;
+
       //expectation
       expect(errorMsg).toEqual(expectedErrorMsg);
       expect(status).toBe(404);
@@ -169,20 +187,13 @@ describe('server', () => {
       //setup
       const project = await database('projects').first();
       const projectId = project.id;
-      const newPalette = {
-        name: 'Pretty Colors',
-        color1: '#3hd95j',
-        color2: '#39dhu7',
-        color3: '#102e9c',
-        color4: '#936kd4',
-        color5: '#9shj27',
-        project_id: projectId
-      };
+      const newPalette = { ...mockPalette, name: 'Pretty Colors', project_id: projectId };
 
       //execution
       const response = await request(app).post('/api/v1/palettes').send(newPalette);
       const palettes = await database('palettes').where('id', response.body.id);
       const palette = palettes[0];
+
       //expectation
       expect(response.status).toBe(201);
       expect(palette.name).toEqual(newPalette.name);
@@ -192,14 +203,7 @@ describe('server', () => {
       //setup
       const project = await database('projects').first();
       const projectId = project.id;
-      const newPalette = {
-        color1: '#3hd95j',
-        color2: '#39dhu7',
-        color3: '#102e9c',
-        color4: '#936kd4',
-        color5: '#9shj27',
-        project_id: projectId
-      };
+      const newPalette = { ...mockPalette, project_id: projectId };
       const expectedMessage = `Expected format: { 
           name: <String>, 
           color1: <String>, 
@@ -220,15 +224,7 @@ describe('server', () => {
 
     it('should return a status of 412 and a message if no matching project id', async () => {
       //setup
-      const newPalette = {
-        name: 'Pretty Colors',
-        color1: '#3hd95j',
-        color2: '#39dhu7',
-        color3: '#102e9c',
-        color4: '#936kd4',
-        color5: '#9shj27',
-        project_id: "0"
-      };
+      const newPalette = { ...mockPalette, name: 'Pretty Colors', project_id: "0" };
       const expectedMessage = 'Cannot add a palette without a project. No project exists with id: 0';
 
       //execution
@@ -291,15 +287,8 @@ describe('server', () => {
       //setup
       const paletteToUpdate = await database('palettes').first();
       const id = paletteToUpdate.id;
-      const updatedPalette = {
-        name: 'Pretty Colors',
-        color1: '#3hd95j',
-        color2: '#39dhu7',
-        color3: '#102e9c',
-        color4: '#936kd4',
-        color5: '#9shj27',
-        project_id: paletteToUpdate.project_id
-      };
+      const updatedPalette = { ...mockPalette, name: 'Pretty Colors', project_id: paletteToUpdate.project_id };
+
       //execution
       const response = await request(app).put(`/api/v1/palettes/${id}`).send(updatedPalette);
       const results = await database('palettes').where('id', id);
@@ -314,15 +303,8 @@ describe('server', () => {
     it('should return a status of 404 and a message if no palette with id exisits in db', async() => {
       //setup
       const expectedMessage = 'No palette exists with the id: 0';
-      const updatedPalette = {
-        name: 'Pretty Colors',
-        color1: '#3hd95j',
-        color2: '#39dhu7',
-        color3: '#102e9c',
-        color4: '#936kd4',
-        color5: '#9shj27',
-        project_id: 0
-      };
+      const updatedPalette = { ...mockPalette, name: 'Pretty Colors', project_id: 0 };
+
       //execution
       const response = await request(app).put('/api/v1/palettes/0').send(updatedPalette);
     

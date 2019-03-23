@@ -14,11 +14,23 @@ app.get('/', (request, response) => {
 });
 
 app.get('/api/v1/projects', (request, response) => {
+  const nameQuery = request.query.name;
+  if(nameQuery) {
+    database('projects').where('name', 'like', `%${nameQuery}%`)
+      .then(projects => {
+        return response.status(200).json(projects);
+      })
+      .catch(error => {
+        return response.status(500).json({ error });
+      });
+  }
   database('projects').select()
     .then(projects => {
-      response.status(200).json(projects);
+      return response.status(200).json(projects);
     })
-    .catch(error => response.status(500).json({ error }));
+    .catch(error => {
+      return response.status(500).json({ error });
+    });
 });
 
 app.get('/api/v1/palettes/:id', (request, response) => {
@@ -57,10 +69,16 @@ app.get('/api/v1/projects/:id/palettes', (request, response) => {
     })
     .then(() => {
       database('palettes').where('project_id', id)
-        .then(palettes => {return response.status(200).json(palettes)})
-        .catch(error => { return response.status(500).json({ error })});
+        .then(palettes => {
+          return response.status(200).json(palettes)
+        })
+        .catch(error => { 
+          return response.status(500).json({ error })
+        });
     })
-    .catch(error => {return response.status(500).json({ error })});
+    .catch(error => {
+      return response.status(500).json({ error })
+    });
 });
 
 app.post('/api/v1/projects', (request, response) => {
@@ -77,7 +95,9 @@ app.post('/api/v1/projects', (request, response) => {
         .then(projectIds => response.status(201).json({ id: projectIds[0] }))
         .catch(error => response.status(500).json({ error }))
     })
-  .catch(error => {return response.status(500).json({ error })});   
+  .catch(error => {
+    return response.status(500).json({ error })
+  });   
 });
 
 app.post('/api/v1/palettes', (request, response) => {
@@ -109,9 +129,13 @@ app.post('/api/v1/palettes', (request, response) => {
         .then(paletteIds => {
           return response.status(201).json({ id: paletteIds[0] });
         })
-        .catch(error => { return response.status(500).json({ error })});
+        .catch(error => { 
+          return response.status(500).json({ error })
+        });
     })
-    .catch(error => { return response.status(500).json({ error }) });
+    .catch(error => { 
+      return response.status(500).json({ error }) 
+    });
 });
 
 app.put('/api/v1/projects/:id', (request, response) => {
@@ -129,10 +153,16 @@ app.put('/api/v1/projects/:id', (request, response) => {
             return response.status(409).json('Project name already exists.')
           } 
           database('projects').where('id', id).update(projectUpdates)
-            .then(() => {return response.sendStatus(204)})
-            .catch(error => {return response.status(500).json({ error })})
+            .then(() => {
+              return response.sendStatus(204)
+            })
+            .catch(error => {
+              return response.status(500).json({ error })
+            })
         })
-        .catch(error => {return response.status(500).json({ error })})
+        .catch(error => {
+          return response.status(500).json({ error })
+        })
     })
     .catch(error => response.status(500).json({ error }))
 })

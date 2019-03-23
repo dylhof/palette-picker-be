@@ -43,6 +43,7 @@ describe('server', () => {
 
       //expectation
       expect(nameResult).toEqual(nameParam);
+      expect(response.body.length).toBe(1);
     });
   });
 

@@ -4,6 +4,9 @@
 ![Schema](./images/palette-picker-schema.png)
 
 ## API Calls
+### Base URL
+  > The Colorations API is hosted at ```https://palette-picker-be.herokuapp.com/``` 
+  which should be used as the base URL for API requests
 ### GET
   > There are four endpoints to get data, two for Projects and two for Palettes.
 

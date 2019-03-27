@@ -158,6 +158,19 @@ Request: ```/api/v1/projects/2/palettes```
 |`color5`   | `string`  | Hex code for color 5|
 |`project_id`   | `integer`  | ID of Project that the palette belongs to - used as the foreign key|
 
+**Example Request Body:**
+```
+{
+  "name": "Pale Purples",
+  "color1": "#BCF8EC",
+  "color2": "#AED9E0",
+  "color3": "#91A6E0",
+  "color4": "#8B687F",
+  "color5": "#7B435B",
+  "project_id": 2
+}
+```
+
 ### PUT
   > There are two endpoints to edit data, one for Projects and one for Palettes.
 
@@ -191,6 +204,19 @@ Request: ```/api/v1/projects/2/palettes```
 |`color4`   | `string`  | Hex code for color 4|
 |`color5`   | `string`  | Hex code for color 5|
 |`project_id`   | `integer`  | ID of Project that the palette belongs to - used as the foreign key|
+
+**Example Request Body:**
+```
+{
+  "name": "Pale Purples",
+  "color1": "#BCF8EC",
+  "color2": "#AED9E0",
+  "color3": "#91A6E0",
+  "color4": "#8B687F",
+  "color5": "#7B435B",
+  "project_id": 2
+}
+```
 
 ### Delete
   > There are two endpoints to delete data, one for Projects and one for Palettes.
